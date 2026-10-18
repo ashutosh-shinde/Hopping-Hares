@@ -1,7 +1,7 @@
 ---
 output:
   github_document:
-    html_preview: False
+    html_preview: false
 ---
 
 ```{r setup, include = FALSE}
@@ -147,7 +147,10 @@ within this page, three ways through it:
 > 5.  Each event has a rate (per year) as below:\
 >
 >     - Birth rate in cell $i$:\
->       $$B_i(n) = b_0 \;\times\; f_i \;\times\; \varphi(n) \;\times\; s(n) \;\times\; n $$
+>
+>       ``` math
+>       B_i(n) = b_0 \;\times\; f_i \;\times\; \varphi(n) \;\times\; s(n) \;\times\; n
+>       ```
 >
 >       - $b_0 := \text{intrinsic per capita birth rate (per year)}$
 >
@@ -166,12 +169,18 @@ within this page, three ways through it:
 >         $\text{(it slows births as the cell fills and stops them at } K\text{. If hopping pushes } n \text{ above } K \text{, } s \text{ stays at 0.)}$\
 >
 >     - Death rate in cell $i$:\
->       $$D_i(n) = \mu\,n$$
+>
+>       ``` math
+>       D_i(n) = \mu\,n
+>       ```
 >
 >       - $\mu := \text{deaths per hare per year, constant throughout}$\
 >
 >     - Hop rate from cell $i$ to cell $j$:\
->       $$H_{i\to j} = \frac{m}{4}\,a_{ij}\,n_i,\qquad a_{ij} = \dfrac{q_j^{\alpha}}{q_i^{\alpha}+q_j^{\alpha}}$$
+>
+>       ``` math
+>       H_{i\to j} = \frac{m}{4}\,a_{ij}\,n_i,\qquad a_{ij} = \dfrac{q_j^{\alpha}}{q_i^{\alpha}+q_j^{\alpha}}
+>       ```
 >
 >       - $m := \text{number of hop tries per hare per year, a quarter toward each side}$
 >
@@ -292,18 +301,26 @@ makes the board a **continuous-time Markov chain.**
   - jump $\Delta_e$: one hare more in a cell (birth), one hare less
     (death), or one less in a cell and one more in the next cell (hop).
 
-$$\frac{dP(\vec n,t)}{dt} = \sum_{e}\Big[\,r_e(\vec n-\Delta_e)\,P(\vec n-\Delta_e,t)\;-\;r_e(\vec n)\,P(\vec n,t)\Big]$$
+``` math
+\frac{dP(\vec n,t)}{dt} = \sum_{e}\Big[\,r_e(\vec n-\Delta_e)\,P(\vec n-\Delta_e,t)\;-\;r_e(\vec n)\,P(\vec n,t)\Big]
+```
 
 > **Master equation for one cell.** With births and deaths only, no
 > hop.\
-> $$\frac{dP(n,t)}{dt} = B(n-1)\,P(n-1,t) + \mu\,(n+1)\,P(n+1,t) - \big[B(n)+\mu n\big]\,P(n,t)$$\
+>
+> ``` math
+> \frac{dP(n,t)}{dt} = B(n-1)\,P(n-1,t) + \mu\,(n+1)\,P(n+1,t) - \big[B(n)+\mu n\big]\,P(n,t)
+> ```
+>
 > This is a system of $21$ ODEs, one for each $n = 0, 1, \dots, 20$.
 >
 > Solving them gives the mean life of a full cell exactly: 544 years at
 > food 1.0 and 74 years at food 0.8.
 
 > **Master equation for two cells, joined by hopping.**
-> $$\begin{aligned}
+>
+> ``` math
+> \begin{aligned}
 > \frac{dP(n_1,n_2,t)}{dt} \;=\;\;
 > & B_1(n_1-1)\,P(n_1-1,\,n_2) \;-\; B_1(n_1)\,P(n_1,n_2) && \text{birth in cell 1}\\
 > +\; & \mu\,(n_1+1)\,P(n_1+1,\,n_2) \;-\; \mu\, n_1\, P(n_1,n_2) && \text{death in cell 1}\\
@@ -311,16 +328,19 @@ $$\frac{dP(\vec n,t)}{dt} = \sum_{e}\Big[\,r_e(\vec n-\Delta_e)\,P(\vec n-\Delta
 > +\; & \mu\,(n_2+1)\,P(n_1,\,n_2+1) \;-\; \mu\, n_2\, P(n_1,n_2) && \text{death in cell 2}\\
 > +\; & H_{12}(n_1+1)\,P(n_1+1,\,n_2-1) \;-\; H_{12}(n_1)\,P(n_1,n_2) && \text{hop from 1 to 2}\\
 > +\; & H_{21}(n_2+1)\,P(n_1-1,\,n_2+1) \;-\; H_{21}(n_2)\,P(n_1,n_2) && \text{hop from 2 to 1}
-> \end{aligned}$$
+> \end{aligned}
+> ```
 
 #### Master equation for whole landscape
 
-$$\begin{aligned}
+``` math
+\begin{aligned}
 \frac{dP(\mathbf n,t)}{dt} \;=\;\;
 & \sum_{i}\Big[\,B_i(n_i-1)\,P(\mathbf n-\mathbf e_i,t) \;-\; B_i(n_i)\,P(\mathbf n,t)\,\Big] \\
 +\; & \sum_{i}\Big[\,\mu\,(n_i+1)\,P(\mathbf n+\mathbf e_i,t) \;-\; \mu\, n_i\,P(\mathbf n,t)\,\Big] \\
 +\; & \sum_{i}\;\sum_{j\in\mathcal N(i)}\Big[\,H_{ij}(n_i+1)\,P(\mathbf n+\mathbf e_i-\mathbf e_j,t) \;-\; H_{ij}(n_i)\,P(\mathbf n,t)\,\Big]
-\end{aligned}$$
+\end{aligned}
+```
 
 > This is a system of more than $21^{400}$ ODEs, nearly impossible to
 > solve even with computers. Therefore I deal with it along two paths:
@@ -341,7 +361,9 @@ we follow the average count of every cell.
 > \
 > Let's track the average population count $\langle n \rangle$:
 >
-> $$\langle n \rangle (t) = \sum_{n = 0}^{K} n P(n, t)$$
+> ``` math
+> \langle n \rangle (t) = \sum_{n = 0}^{K} n P(n, t)
+> ```
 >
 > - $P(n, t) = 0$ for $n \gt K$ if we start at or below $K$.
 >
@@ -353,26 +375,34 @@ we follow the average count of every cell.
 >
 > Differentiate both sides w.r.t. $t$:
 >
-> $$\dfrac{d\langle n \rangle}{dt} = \sum_{n = 0}^{K} n \dfrac{d P(n, t)}{dt}$$
+> ``` math
+> \dfrac{d\langle n \rangle}{dt} = \sum_{n = 0}^{K} n \dfrac{d P(n, t)}{dt}
+> ```
 >
 > Substitute the master equation for $\frac{dP}{dt}$ and rearrange the
 > terms to get:
 >
-> $$\dfrac{d\langle n \rangle}{dt} = \langle B(n) \rangle - \mu \langle n \rangle$$
+> ``` math
+> \dfrac{d\langle n \rangle}{dt} = \langle B(n) \rangle - \mu \langle n \rangle
+> ```
 >
 > Take the second-order Taylor expansion of $B(n)$ around
 > $\langle n \rangle$ and average it:
 >
 > - valid as $B$ is smooth over $n \in (0, K)$ if $h \ge 1$.
 >
->   $$\langle B(n) \rangle = B(\langle n \rangle) + \frac{1}{2}B'' (\langle n \rangle) \operatorname{Var}(n) + \langle R \rangle$$
+>   ``` math
+>   \langle B(n) \rangle = B(\langle n \rangle) + \frac{1}{2}B'' (\langle n \rangle) \mathrm{Var}(n) + \langle R \rangle
+>   ```
 >
 > Therefore $\langle B(n) \rangle \approx B(\langle n \rangle)$ is valid
 > when
-> $\frac{1}{2}B''(\langle n \rangle) \operatorname{Var}(n) \ll B(\langle n \rangle)$.
+> $\frac{1}{2}B''(\langle n \rangle) \mathrm{Var}(n) \ll B(\langle n \rangle)$.
 > And we get the following equation:
 >
-> $$\dfrac{d\langle n \rangle}{dt} =  B(\langle n \rangle) - \mu \langle n \rangle$$
+> ``` math
+> \dfrac{d\langle n \rangle}{dt} =  B(\langle n \rangle) - \mu \langle n \rangle
+> ```
 
 **In our case this is not exactly valid, because the spread is not small
 compared with the count (about 14 hares, give or take 3, at food 1.0),
@@ -391,9 +421,13 @@ eigenvalues.
 > - $j$ runs over its four neighbours, except the closed edges.
 > - We write $x_i$ for $\langle n_i \rangle$.
 
-$$\frac{d\langle n_i\rangle}{dt} = \underbrace{B(\langle n_i \rangle)}_{\text{births}} - \underbrace{\mu\,\langle n_i\rangle}_{\text{deaths}} - \underbrace{\frac{m}{4}\Big(\sum_{j}a_{ij}\Big)\langle n_i\rangle}_{\text{hops out}} + \underbrace{\frac{m}{4}\sum_{j}a_{ji}\,\langle n_j\rangle}_{\text{hops in}}$$
+``` math
+\frac{d\langle n_i\rangle}{dt} = \underbrace{B(\langle n_i \rangle)}_{\text{births}} - \underbrace{\mu\,\langle n_i\rangle}_{\text{deaths}} - \underbrace{\frac{m}{4}\Big(\sum_{j}a_{ij}\Big)\langle n_i\rangle}_{\text{hops out}} + \underbrace{\frac{m}{4}\sum_{j}a_{ji}\,\langle n_j\rangle}_{\text{hops in}}
+```
 
-$$\frac{dx_i}{dt} = b_0\,\rho\,q_i\,x_i\,\varphi(x_i)\,s(x_i) \;-\; \mu\,x_i \;-\; \frac{m}{4}\,x_i\sum_{j}a_{ij} \;+\; \frac{m}{4}\sum_{j}a_{ji}\,x_j$$
+``` math
+\frac{dx_i}{dt} = b_0\,\rho\,q_i\,x_i\,\varphi(x_i)\,s(x_i) \;-\; \mu\,x_i \;-\; \frac{m}{4}\,x_i\sum_{j}a_{ij} \;+\; \frac{m}{4}\sum_{j}a_{ji}\,x_j
+```
 
 > Note: The averaged equations ignore stochasticity. Fokker–Planck and
 > large-deviation expansions can restore it but assume large
@@ -418,14 +452,20 @@ $$\frac{dx_i}{dt} = b_0\,\rho\,q_i\,x_i\,\varphi(x_i)\,s(x_i) \;-\; \mu\,x_i \;-
 >   $\tau$. It starts at 1 when $\tau = 0$ and decreases. Since the
 >   waiting time is independent of the past:
 >
->   $$S(\tau + d\tau) = S(\tau) (1-rd\tau)$$
+>   ``` math
+>   S(\tau + d\tau) = S(\tau) (1-rd\tau)
+>   ```
 >
->   $$\implies \; \; \; \frac{dS}{d\tau} = -rS \; \; \; \implies \; \; \; S(\tau) = e^{-r\tau} \; \; \; \implies \; \; \; P(T\le \tau) = 1 - e^{-r\tau} $$
+>   ``` math
+>   \implies \; \; \; \frac{dS}{d\tau} = -rS \; \; \; \implies \; \; \; S(\tau) = e^{-r\tau} \; \; \; \implies \; \; \; P(T\le \tau) = 1 - e^{-r\tau}
+>   ```
 >
->   $$\begin{aligned}
->   &\implies \; \; \; \tau \sim \operatorname{Exp}(r) \\
+>   ``` math
+>   \begin{aligned}
+>   &\implies \; \; \; \tau \sim \mathrm{Exp}(r) \\
 >   &\implies \; \; \; \text{mean waiting time for the event to happen } = \dfrac{1}{r}
->   \end{aligned}$$
+>   \end{aligned}
+>   ```
 >
 > - Note: Given that the event hasn't happened for time $s$, the
 >   probability that it does not happen for another $\tau$ is
@@ -452,7 +492,7 @@ $$\frac{dx_i}{dt} = b_0\,\rho\,q_i\,x_i\,\varphi(x_i)\,s(x_i) \;-\; \mu\,x_i \;-
 >
 > 1.  Draw random $u_1$ uniformly from $[0, 1]$.
 > 2.  Set
->     $\tau = - \; \dfrac{\ln(u_1)}{R} \;\;\; \implies \;\;\; \tau \sim \operatorname{Exp}(R)$
+>     $\tau = - \; \dfrac{\ln(u_1)}{R} \;\;\; \implies \;\;\; \tau \sim \mathrm{Exp}(R)$
 >     (This is the exact waiting time we wanted.)
 >
 > B. Set which event happens at $\tau$:
@@ -465,7 +505,9 @@ $$\frac{dx_i}{dt} = b_0\,\rho\,q_i\,x_i\,\varphi(x_i)\,s(x_i) \;-\; \mu\,x_i \;-
 > 2.  Lay the rates end to end on a ruler of length $R$, and pick event
 >     $k$ where $u_2 R$ lands:
 >
->     $$r_1 + \dots + r_{k-1} \;<\; u_2 R \;\le\; r_1 + \dots + r_k$$
+>     ``` math
+>     r_1 + \dots + r_{k-1} \;<\; u_2 R \;\le\; r_1 + \dots + r_k
+>     ```
 >
 > 3.  Event $k$ owns a segment of length $r_k$ out of $R$, so $u_2 R$
 >     lands on it with probability $\dfrac{r_k}{R}$, as required.
@@ -505,13 +547,19 @@ $$\frac{dx_i}{dt} = b_0\,\rho\,q_i\,x_i\,\varphi(x_i)\,s(x_i) \;-\; \mu\,x_i \;-
 >   Allee effect). In the stochastic model, zero is also absorbing: an
 >   empty cell stays empty.
 >
-> $$\dfrac{dx}{dt} \; = \; (b_0 \, f \; \varphi(x) \; s(x) \;-\; \mu) x$$
+> ``` math
+> \dfrac{dx}{dt} \; = \; (b_0 \, f \; \varphi(x) \; s(x) \;-\; \mu) x
+> ```
 >
-> $$\implies \;\;\; \text{Equilibrium at }: b_0\,f\;\varphi(x)s(x) = \mu$$
+> ``` math
+> \implies \;\;\; \text{Equilibrium at }: b_0\,f\;\varphi(x)s(x) = \mu
+> ```
 >
 > Rearranging the terms gives the quadratic:
 >
-> $$x^2 \;-\; \Big(K + 1 - \frac{\mu K}{b_0f}\Big)\,x \;+\; K\Big(1 + \frac{\mu\,(h-1)}{b_0f}\Big) \;=\;0$$
+> ``` math
+> x^2 \;-\; \Big(K + 1 - \frac{\mu K}{b_0f}\Big)\,x \;+\; K\Big(1 + \frac{\mu\,(h-1)}{b_0f}\Big) \;=\;0
+> ```
 >
 > Solving the quadratic gives us two equilibrium states: $x_-, x_+$. Or,
 > geometrically, births per hare $g(x) = b_0\; f\; \varphi (x) s(x)$
@@ -545,7 +593,9 @@ The seven boards appear in [section 1.2](#s1-2).
 
 > **Tracking the equilibrium: Theory**
 >
-> $$F_i(x)\;= \;\dfrac{dx_i}{dt}\; = \;b_0\,\rho\,q_i\,x_i\,\varphi(x_i)\,s(x_i) \;-\; \mu\,x_i \;-\; \frac{m}{4}\,x_i\sum_{j}a_{ij} \;+\; \frac{m}{4}\sum_{j}a_{ji}\,x_j$$
+> ``` math
+> F_i(x)\;= \;\dfrac{dx_i}{dt}\; = \;b_0\,\rho\,q_i\,x_i\,\varphi(x_i)\,s(x_i) \;-\; \mu\,x_i \;-\; \frac{m}{4}\,x_i\sum_{j}a_{ij} \;+\; \frac{m}{4}\sum_{j}a_{ji}\,x_j
+> ```
 >
 > These are 400 coupled ODEs (one per cell). Each cell can sit near
 > empty or near full, so the board has many equilibria and listing them
@@ -608,7 +658,7 @@ markers: folds; dotted lines: the drop at each fold. Hollow markers: the
 simulator's mean, always lower.
 
 | Board | folds | first fold | final fold | hares just above the final fold |
-|---------------|---------------|---------------|---------------|---------------|
+|----|----|----|----|----|
 | Shuffled | 1 | 0.771 | 0.771 | 2275 |
 | Blocks $2\times 2$ | 1 | 0.752 | 0.752 | 2023 |
 | Checker $1\times 1$ | 1 | 0.752 | 0.752 | 2057 |
@@ -780,7 +830,7 @@ hares on the board, the mean of years 30–50 over all 80 runs, and the
 deterministic settled count.
 
 | Board | low start | mid start | high start | random start | deterministic | settled $N$ | deterministic $N$ |
-|---------|---------|---------|---------|---------|---------|---------|---------|
+|----|----|----|----|----|----|----|----|
 | Real | 12 | 4 | 9 | 20 | 4–7 | 3293 | 3926 |
 | Shuffled | 10 | 4 | 6 | 9 | 3–6 | 3282 | 3834 |
 | Checker $1\times 1$ | 10 | 2 | 6 | 9 | 3–6 | 3283 | 3812 |
@@ -822,7 +872,7 @@ out of 20. The last two columns give the mean hares at year 50 for the
 high start and the deterministic count from the same start.
 
 | Board | low start | mid start | high start | random start | 1 per cell | mean $N$ at year 50 (high start) | deterministic $N$ at year 50 |
-|---------|---------|---------|---------|---------|---------|---------|---------|
+|----|----|----|----|----|----|----|----|
 | Real | 20 | 20 | 20 | 20 | 0 | 897 | 1663 |
 | Shuffled | 1 | 6 | 9 | 11 | 0 | 24 | 2666 |
 | Checker $1\times 1$ | 0 | 1 | 4 | 1 | 0 | 2 | 2719 |
@@ -921,7 +971,7 @@ the better half); section 2.2 gives the real folds.
   the tipping rain by about 0.08.
 
 | Board | $\rho_{50}$ 50 yr | 100 yr | 150 yr | 200 yr | 300 yr | deterministic fold | gap at 200 yr |
-|---------|---------|---------|---------|---------|---------|---------|---------|
+|----|----|----|----|----|----|----|----|
 | Checker $1\times 1$ | 0.802 (0.801–0.822) | 0.829 (0.827–0.830) | 0.834 (0.833–0.835) | 0.838 (0.837–0.840) | 0.841 (0.839–0.842) | 0.752 | +0.087 |
 | Shuffled | 0.799 (0.799–0.800) | 0.825 (0.825–0.825) | 0.832 (0.830–0.834) | 0.838 (0.836–0.840) | 0.844 (0.842–0.845) | 0.771 | +0.067 |
 | Blocks $2\times 2$ | 0.801 (0.800–0.801) | 0.825 (0.824–0.826) | 0.832 (0.830–0.833) | 0.835 (0.833–0.837) | 0.839 (0.837–0.841) | 0.752 | +0.083 |
@@ -1185,7 +1235,7 @@ deterministic board on the same ramp. Dotted black: the deterministic
 fold. Dash-dot: E2's $\rho_{50}(200)$.
 
 | Board | 50 yr | 150 yr | 450 yr | 1,350 yr | 4,050 yr | E2 $\rho_{50}(200)$ | fold |
-|---------|---------|---------|---------|---------|---------|---------|---------|
+|----|----|----|----|----|----|----|----|
 | Real | 0.637 ($\pm 0.011$; deterministic 0.588) | 0.706 ($\pm 0.008$; deterministic 0.653) | 0.744 ($\pm 0.009$; deterministic 0.686) | 0.763 ($\pm 0.005$; deterministic 0.703) | 0.779 ($\pm 0.007$; deterministic 0.710) | 0.785 | 0.718 |
 | Shuffled | 0.656 ($\pm 0.007$; deterministic 0.608) | 0.736 ($\pm 0.010$; deterministic 0.679) | 0.783 ($\pm 0.005$; deterministic 0.718) | 0.808 ($\pm 0.005$; deterministic 0.740) | 0.826 ($\pm 0.004$; deterministic 0.754) | 0.838 | 0.771 |
 | Checker $1\times 1$ | 0.661 ($\pm 0.006$; deterministic 0.610) | 0.741 ($\pm 0.007$; deterministic 0.679) | 0.785 ($\pm 0.006$; deterministic 0.714) | 0.812 ($\pm 0.004$; deterministic 0.732) | 0.828 ($\pm 0.004$; deterministic 0.742) | 0.838 | 0.752 |
@@ -1326,7 +1376,7 @@ total.
   single cells (best cell in each $5\times 5$ part).
 - Rains 1.0, 0.9, 0.85 and 0.785 (Real's $\rho_{50}$ at 200 years). 50
   runs $\times$ 50 years each: 2,000 runs. Success: hares alive at year
-  50. 
+  50.
 
 <a name="s6-3"></a>
 
@@ -1346,7 +1396,7 @@ E4_size_plot()
 Share of runs alive at year 50 against colony size.
 
 | Runs alive at 50 (of 50) | $1\times 1$ (14 hares) | $2\times 2$ (56 hares) | $3\times 3$ (126 hares) | $4\times 4$ (224 hares) | $5\times 5$ (350 hares) | $6\times 6$ (504 hares) | $8\times 8$ (896 hares) | smallest colony, $\ge$ half alive |
-|--------|--------|--------|--------|--------|--------|--------|--------|--------|
+|----|----|----|----|----|----|----|----|----|
 | rain 1 | 0 | 42 | 50 | 50 | 50 | 50 | 50 | $2\times 2$ |
 | rain 0.9 | 0 | 6 | 37 | 50 | 50 | 50 | 50 | $3\times 3$ |
 | rain 0.85 | 0 | 0 | 5 | 45 | 50 | 50 | 50 | $4\times 4$ |
@@ -1369,7 +1419,7 @@ E4_designs_plot()
 sixteen single cells.
 
 | 224 hares as | one $4\times 4$ | four $2\times 2$ | sixteen $1\times 1$ |
-|-------------------------|----------------|----------------|----------------|
+|----|----|----|----|
 | rain 1 | 50 | 50 | 33 |
 | rain 0.9 | 50 | 25 | 4 |
 | rain 0.85 | 49 | 0 | 0 |
@@ -1516,7 +1566,7 @@ source("checks/Run_checks.R")    # 28 checks in about a minute; each says PASS
 ```
 
 | Folder or file | What it holds |
-|------------------------------------|------------------------------------|
+|----|----|
 | `Load.R` | reads every function file below |
 | `R/Params.R` | `Set_params()`: the six parameters, with range checks (section 1.1) |
 | `R/Map.R` | the grid, neighbours and crossing chances; the seven boards (sections 1.2, 2.2) |
@@ -1538,7 +1588,7 @@ source("checks/Run_checks.R")    # 28 checks in about a minute; each says PASS
 input; `REPORT.Rmd` and `README.Rmd` call them.
 
 | Section | Nicknames |
-|------------------------------------|------------------------------------|
+|----|----|
 | 2.1 | `deterministic_one_cell_plot_1()`, `deterministic_one_cell_plot_2()` |
 | 1.2 | `boards_plot()` |
 | 2.2 | `deterministic_fold_plot_1()`, `deterministic_fold_plot_2()` |

@@ -1,4 +1,3 @@
-
 # Hopping-Hares
 
 ### *A stochastic, spatial, finite-population model*
@@ -133,10 +132,13 @@ within this page, three ways through it:
 >     - Hop out $(i \rightarrow j)$ **:** $n_i \rightarrow n_i  - 1$,
 >       $n_j \rightarrow n_j + 1$.
 >
-> 5.  Each event has a rate (per year) as below:  
+> 5.  Each event has a rate (per year) as below:
 >
->     - Birth rate in cell $i$:  
->       $$B_i(n) = b_0 \;\times\; f_i \;\times\; \varphi(n) \;\times\; s(n) \;\times\; n $$
+>     - Birth rate in cell $i$:
+>
+>       ``` math
+>       B_i(n) = b_0 \;\times\; f_i \;\times\; \varphi(n) \;\times\; s(n) \;\times\; n
+>       ```
 >
 >       - $b_0 := \text{intrinsic per capita birth rate (per year)}$
 >
@@ -146,34 +148,45 @@ within this page, three ways through it:
 >
 >       - $\varphi(n)=  \dfrac{n-1}{n-1+h}:= \text{mate-finding chance; a single hare cannot breed}$
 >
->         $h := \text{partner constant.}$  
+>         $h := \text{partner constant.}$\
 >         $(\text{number of hares needed around a hare for it to find a partner half the time.})$
 >
 >       - $s(n)= \max \left( 0, 1-\dfrac{n}{K} \right) := \text{fraction of the free space in the cell.}$
 >
->         $K :=  \text{the most hares a cell can support by breeding}$  
->         $\text{(it slows births as the cell fills and stops them at } K\text{. If hopping pushes } n \text{ above } K \text{, } s \text{ stays at 0.)}$  
+>         $K :=  \text{the most hares a cell can support by breeding}$\
+>         $\text{(it slows births as the cell fills and stops them at } K\text{. If hopping pushes } n \text{ above } K \text{, } s \text{ stays at 0.)}$
 >
->     - Death rate in cell $i$:  
->       $$D_i(n) = \mu\,n$$
+>     - Death rate in cell $i$:
 >
->       - $\mu := \text{deaths per hare per year, constant throughout}$  
+>       ``` math
+>       D_i(n) = \mu\,n
+>       ```
 >
->     - Hop rate from cell $i$ to cell $j$:  
->       $$H_{i\to j} = \frac{m}{4}\,a_{ij}\,n_i,\qquad a_{ij} = \dfrac{q_j^{\alpha}}{q_i^{\alpha}+q_j^{\alpha}}$$
+>       - $\mu := \text{deaths per hare per year, constant throughout}$
+>
+>     - Hop rate from cell $i$ to cell $j$:
+>
+>       ``` math
+>       H_{i\to j} = \frac{m}{4}\,a_{ij}\,n_i,\qquad a_{ij} = \dfrac{q_j^{\alpha}}{q_i^{\alpha}+q_j^{\alpha}}
+>       ```
 >
 >       - $m := \text{number of hop tries per hare per year, a quarter toward each side}$
 >
 >       - $a_{ij} :=  \text{the crossing chance from cell } i \text{ into cell } j$
 >
->       - $\alpha : = \text{ pickiness: how strongly a hare prefers better grass}$  
+>       - $\alpha : = \text{ pickiness: how strongly a hare prefers better grass}$\
 >         $(\text{e.g. } \alpha=0 : \text{each hop has probability } \frac{1}{2} \text{, independent of cell quality; no pickiness for any cell.})$
 
 <figure>
-<img src="figs/m1_demo_grid.png"
-alt="Demo grid (drawn with TikZ: figs/m1_demo_grid.tex)" />
-<figcaption aria-hidden="true">Demo grid (drawn with TikZ:
-figs/m1_demo_grid.tex)</figcaption>
+
+<img src="figs/m1_demo_grid.png" alt="Demo grid (drawn with TikZ: figs/m1_demo_grid.tex)"/>
+
+<figcaption aria-hidden="true">
+
+Demo grid (drawn with TikZ: figs/m1_demo_grid.tex)
+
+</figcaption>
+
 </figure>
 
 > #### Default parameters: $b_0 = 4$, $h = 2$, $K = 20$, $\mu = 1$, $m = 10$, $\alpha = 2$.
@@ -214,7 +227,7 @@ Note: Hops link each cell to its neighbours, so the arrangement of grass
 enters the equations. If we set $m = 0$, no hops happen, and all boards
 give the same results.
 
-<img src="REPORT_files/figure-gfm/boards-1.png" alt="The seven boards"  />
+<img src="REPORT_files/figure-gfm/boards-1.png" alt="The seven boards"/>
 
 The same 400 grass values in seven arrangements. Darker green is better
 grass.
@@ -283,18 +296,25 @@ makes the board a **continuous-time Markov chain.**
   - jump $\Delta_e$: one hare more in a cell (birth), one hare less
     (death), or one less in a cell and one more in the next cell (hop).
 
-$$\frac{dP(\vec n,t)}{dt} = \sum_{e}\Big[\,r_e(\vec n-\Delta_e)\,P(\vec n-\Delta_e,t)\;-\;r_e(\vec n)\,P(\vec n,t)\Big]$$
+``` math
+\frac{dP(\vec n,t)}{dt} = \sum_{e}\Big[\,r_e(\vec n-\Delta_e)\,P(\vec n-\Delta_e,t)\;-\;r_e(\vec n)\,P(\vec n,t)\Big]
+```
 
-> **Master equation for one cell.** With births and deaths only, no
-> hop.  
-> $$\frac{dP(n,t)}{dt} = B(n-1)\,P(n-1,t) + \mu\,(n+1)\,P(n+1,t) - \big[B(n)+\mu n\big]\,P(n,t)$$  
+> **Master equation for one cell.** With births and deaths only, no hop.
+>
+> ``` math
+> \frac{dP(n,t)}{dt} = B(n-1)\,P(n-1,t) + \mu\,(n+1)\,P(n+1,t) - \big[B(n)+\mu n\big]\,P(n,t)
+> ```
+>
 > This is a system of $21$ ODEs, one for each $n = 0, 1, \dots, 20$.
 >
 > Solving them gives the mean life of a full cell exactly: 544 years at
 > food 1.0 and 74 years at food 0.8.
 
 > **Master equation for two cells, joined by hopping.**
-> $$\begin{aligned}
+>
+> ``` math
+> \begin{aligned}
 > \frac{dP(n_1,n_2,t)}{dt} \;=\;\;
 > & B_1(n_1-1)\,P(n_1-1,\,n_2) \;-\; B_1(n_1)\,P(n_1,n_2) && \text{birth in cell 1}\\
 > +\; & \mu\,(n_1+1)\,P(n_1+1,\,n_2) \;-\; \mu\, n_1\, P(n_1,n_2) && \text{death in cell 1}\\
@@ -302,16 +322,19 @@ $$\frac{dP(\vec n,t)}{dt} = \sum_{e}\Big[\,r_e(\vec n-\Delta_e)\,P(\vec n-\Delta
 > +\; & \mu\,(n_2+1)\,P(n_1,\,n_2+1) \;-\; \mu\, n_2\, P(n_1,n_2) && \text{death in cell 2}\\
 > +\; & H_{12}(n_1+1)\,P(n_1+1,\,n_2-1) \;-\; H_{12}(n_1)\,P(n_1,n_2) && \text{hop from 1 to 2}\\
 > +\; & H_{21}(n_2+1)\,P(n_1-1,\,n_2+1) \;-\; H_{21}(n_2)\,P(n_1,n_2) && \text{hop from 2 to 1}
-> \end{aligned}$$
+> \end{aligned}
+> ```
 
 #### Master equation for whole landscape
 
-$$\begin{aligned}
+``` math
+\begin{aligned}
 \frac{dP(\mathbf n,t)}{dt} \;=\;\;
 & \sum_{i}\Big[\,B_i(n_i-1)\,P(\mathbf n-\mathbf e_i,t) \;-\; B_i(n_i)\,P(\mathbf n,t)\,\Big] \\
 +\; & \sum_{i}\Big[\,\mu\,(n_i+1)\,P(\mathbf n+\mathbf e_i,t) \;-\; \mu\, n_i\,P(\mathbf n,t)\,\Big] \\
 +\; & \sum_{i}\;\sum_{j\in\mathcal N(i)}\Big[\,H_{ij}(n_i+1)\,P(\mathbf n+\mathbf e_i-\mathbf e_j,t) \;-\; H_{ij}(n_i)\,P(\mathbf n,t)\,\Big]
-\end{aligned}$$
+\end{aligned}
+```
 
 > This is a system of more than $21^{400}$ ODEs, nearly impossible to
 > solve even with computers. Therefore I deal with it along two paths:
@@ -328,11 +351,13 @@ We want a simplified equation that answers three questions: where does a
 board settle, is that state stable, and at what rain does it vanish? So
 we follow the average count of every cell.
 
-> **One cell case:** With births and deaths only, no hop.  
->   
+> **One cell case:** With births and deaths only, no hop.
+>
 > Let’s track the average population count $\langle n \rangle$:
 >
-> $$\langle n \rangle (t) = \sum_{n = 0}^{K} n P(n, t)$$
+> ``` math
+> \langle n \rangle (t) = \sum_{n = 0}^{K} n P(n, t)
+> ```
 >
 > - $P(n, t) = 0$ for $n \gt K$ if we start at or below $K$.
 >
@@ -344,26 +369,34 @@ we follow the average count of every cell.
 >
 > Differentiate both sides w.r.t. $t$:
 >
-> $$\dfrac{d\langle n \rangle}{dt} = \sum_{n = 0}^{K} n \dfrac{d P(n, t)}{dt}$$
+> ``` math
+> \dfrac{d\langle n \rangle}{dt} = \sum_{n = 0}^{K} n \dfrac{d P(n, t)}{dt}
+> ```
 >
 > Substitute the master equation for $\frac{dP}{dt}$ and rearrange the
 > terms to get:
 >
-> $$\dfrac{d\langle n \rangle}{dt} = \langle B(n) \rangle - \mu \langle n \rangle$$
+> ``` math
+> \dfrac{d\langle n \rangle}{dt} = \langle B(n) \rangle - \mu \langle n \rangle
+> ```
 >
 > Take the second-order Taylor expansion of $B(n)$ around
 > $\langle n \rangle$ and average it:
 >
 > - valid as $B$ is smooth over $n \in (0, K)$ if $h \ge 1$.
 >
->   $$\langle B(n) \rangle = B(\langle n \rangle) + \frac{1}{2}B'' (\langle n \rangle) \operatorname{Var}(n) + \langle R \rangle$$
+>   ``` math
+>   \langle B(n) \rangle = B(\langle n \rangle) + \frac{1}{2}B'' (\langle n \rangle) \mathrm{Var}(n) + \langle R \rangle
+>   ```
 >
 > Therefore $\langle B(n) \rangle \approx B(\langle n \rangle)$ is valid
 > when
-> $\frac{1}{2}B''(\langle n \rangle) \operatorname{Var}(n) \ll B(\langle n \rangle)$.
+> $\frac{1}{2}B''(\langle n \rangle) \mathrm{Var}(n) \ll B(\langle n \rangle)$.
 > And we get the following equation:
 >
-> $$\dfrac{d\langle n \rangle}{dt} =  B(\langle n \rangle) - \mu \langle n \rangle$$
+> ``` math
+> \dfrac{d\langle n \rangle}{dt} =  B(\langle n \rangle) - \mu \langle n \rangle
+> ```
 
 **In our case this is not exactly valid, because the spread is not small
 compared with the count (about 14 hares, give or take 3, at food 1.0),
@@ -382,9 +415,13 @@ eigenvalues.
 > - $j$ runs over its four neighbours, except the closed edges.
 > - We write $x_i$ for $\langle n_i \rangle$.
 
-$$\frac{d\langle n_i\rangle}{dt} = \underbrace{B(\langle n_i \rangle)}_{\text{births}} - \underbrace{\mu\,\langle n_i\rangle}_{\text{deaths}} - \underbrace{\frac{m}{4}\Big(\sum_{j}a_{ij}\Big)\langle n_i\rangle}_{\text{hops out}} + \underbrace{\frac{m}{4}\sum_{j}a_{ji}\,\langle n_j\rangle}_{\text{hops in}}$$
+``` math
+\frac{d\langle n_i\rangle}{dt} = \underbrace{B(\langle n_i \rangle)}_{\text{births}} - \underbrace{\mu\,\langle n_i\rangle}_{\text{deaths}} - \underbrace{\frac{m}{4}\Big(\sum_{j}a_{ij}\Big)\langle n_i\rangle}_{\text{hops out}} + \underbrace{\frac{m}{4}\sum_{j}a_{ji}\,\langle n_j\rangle}_{\text{hops in}}
+```
 
-$$\frac{dx_i}{dt} = b_0\,\rho\,q_i\,x_i\,\varphi(x_i)\,s(x_i) \;-\; \mu\,x_i \;-\; \frac{m}{4}\,x_i\sum_{j}a_{ij} \;+\; \frac{m}{4}\sum_{j}a_{ji}\,x_j$$
+``` math
+\frac{dx_i}{dt} = b_0\,\rho\,q_i\,x_i\,\varphi(x_i)\,s(x_i) \;-\; \mu\,x_i \;-\; \frac{m}{4}\,x_i\sum_{j}a_{ij} \;+\; \frac{m}{4}\sum_{j}a_{ji}\,x_j
+```
 
 > Note: The averaged equations ignore stochasticity. Fokker–Planck and
 > large-deviation expansions can restore it but assume large
@@ -409,14 +446,20 @@ $$\frac{dx_i}{dt} = b_0\,\rho\,q_i\,x_i\,\varphi(x_i)\,s(x_i) \;-\; \mu\,x_i \;-
 >   $\tau$. It starts at 1 when $\tau = 0$ and decreases. Since the
 >   waiting time is independent of the past:
 >
->   $$S(\tau + d\tau) = S(\tau) (1-rd\tau)$$
+>   ``` math
+>   S(\tau + d\tau) = S(\tau) (1-rd\tau)
+>   ```
 >
->   $$\implies \; \; \; \frac{dS}{d\tau} = -rS \; \; \; \implies \; \; \; S(\tau) = e^{-r\tau} \; \; \; \implies \; \; \; P(T\le \tau) = 1 - e^{-r\tau} $$
+>   ``` math
+>   \implies \; \; \; \frac{dS}{d\tau} = -rS \; \; \; \implies \; \; \; S(\tau) = e^{-r\tau} \; \; \; \implies \; \; \; P(T\le \tau) = 1 - e^{-r\tau}
+>   ```
 >
->   $$\begin{aligned}
->   &\implies \; \; \; \tau \sim \operatorname{Exp}(r) \\
+>   ``` math
+>   \begin{aligned}
+>   &\implies \; \; \; \tau \sim \mathrm{Exp}(r) \\
 >   &\implies \; \; \; \text{mean waiting time for the event to happen } = \dfrac{1}{r}
->   \end{aligned}$$
+>   \end{aligned}
+>   ```
 >
 > - Note: Given that the event hasn’t happened for time $s$, the
 >   probability that it does not happen for another $\tau$ is
@@ -443,7 +486,7 @@ $$\frac{dx_i}{dt} = b_0\,\rho\,q_i\,x_i\,\varphi(x_i)\,s(x_i) \;-\; \mu\,x_i \;-
 >
 > 1.  Draw random $u_1$ uniformly from $[0, 1]$.
 > 2.  Set
->     $\tau = - \; \dfrac{\ln(u_1)}{R} \;\;\; \implies \;\;\; \tau \sim \operatorname{Exp}(R)$
+>     $\tau = - \; \dfrac{\ln(u_1)}{R} \;\;\; \implies \;\;\; \tau \sim \mathrm{Exp}(R)$
 >     (This is the exact waiting time we wanted.)
 >
 > B. Set which event happens at $\tau$:
@@ -456,7 +499,9 @@ $$\frac{dx_i}{dt} = b_0\,\rho\,q_i\,x_i\,\varphi(x_i)\,s(x_i) \;-\; \mu\,x_i \;-
 > 2.  Lay the rates end to end on a ruler of length $R$, and pick event
 >     $k$ where $u_2 R$ lands:
 >
->     $$r_1 + \dots + r_{k-1} \;<\; u_2 R \;\le\; r_1 + \dots + r_k$$
+>     ``` math
+>     r_1 + \dots + r_{k-1} \;<\; u_2 R \;\le\; r_1 + \dots + r_k
+>     ```
 >
 > 3.  Event $k$ owns a segment of length $r_k$ out of $R$, so $u_2 R$
 >     lands on it with probability $\dfrac{r_k}{R}$, as required.
@@ -496,13 +541,19 @@ $$\frac{dx_i}{dt} = b_0\,\rho\,q_i\,x_i\,\varphi(x_i)\,s(x_i) \;-\; \mu\,x_i \;-
 >   Allee effect). In the stochastic model, zero is also absorbing: an
 >   empty cell stays empty.
 >
-> $$\dfrac{dx}{dt} \; = \; (b_0 \, f \; \varphi(x) \; s(x) \;-\; \mu) x$$
+> ``` math
+> \dfrac{dx}{dt} \; = \; (b_0 \, f \; \varphi(x) \; s(x) \;-\; \mu) x
+> ```
 >
-> $$\implies \;\;\; \text{Equilibrium at }: b_0\,f\;\varphi(x)s(x) = \mu$$
+> ``` math
+> \implies \;\;\; \text{Equilibrium at }: b_0\,f\;\varphi(x)s(x) = \mu
+> ```
 >
 > Rearranging the terms gives the quadratic:
 >
-> $$x^2 \;-\; \Big(K + 1 - \frac{\mu K}{b_0f}\Big)\,x \;+\; K\Big(1 + \frac{\mu\,(h-1)}{b_0f}\Big) \;=\;0$$
+> ``` math
+> x^2 \;-\; \Big(K + 1 - \frac{\mu K}{b_0f}\Big)\,x \;+\; K\Big(1 + \frac{\mu\,(h-1)}{b_0f}\Big) \;=\;0
+> ```
 >
 > Solving the quadratic gives us two equilibrium states: $x_-, x_+$. Or,
 > geometrically, births per hare $g(x) = b_0\; f\; \varphi (x) s(x)$
@@ -516,7 +567,7 @@ $$\frac{dx_i}{dt} = b_0\,\rho\,q_i\,x_i\,\varphi(x_i)\,s(x_i) \;-\; \mu\,x_i \;-
 > For the default parameters, the critical food value, where the system
 > tips to extinction, is $f_c = 0.498$.
 
-<img src="REPORT_files/figure-gfm/d1-one-cell-1.png" alt="Births per hare against hares for four foods, and the settled and tipping counts against food" width="49%" /><img src="REPORT_files/figure-gfm/d1-one-cell-2.png" alt="Births per hare against hares for four foods, and the settled and tipping counts against food" width="49%" />
+<img src="REPORT_files/figure-gfm/d1-one-cell-1.png" alt="Births per hare against hares for four foods, and the settled and tipping counts against food" width="49%"/><img src="REPORT_files/figure-gfm/d1-one-cell-2.png" alt="Births per hare against hares for four foods, and the settled and tipping counts against food" width="49%"/>
 
 A: births per hare (the hill) against deaths per hare (the line) for
 four foods. B: the settled count (blue) and the tipping count (dashed)
@@ -533,7 +584,9 @@ The seven boards appear in [section 1.2](#s1-2).
 
 > **Tracking the equilibrium: Theory**
 >
-> $$F_i(x)\;= \;\dfrac{dx_i}{dt}\; = \;b_0\,\rho\,q_i\,x_i\,\varphi(x_i)\,s(x_i) \;-\; \mu\,x_i \;-\; \frac{m}{4}\,x_i\sum_{j}a_{ij} \;+\; \frac{m}{4}\sum_{j}a_{ji}\,x_j$$
+> ``` math
+> F_i(x)\;= \;\dfrac{dx_i}{dt}\; = \;b_0\,\rho\,q_i\,x_i\,\varphi(x_i)\,s(x_i) \;-\; \mu\,x_i \;-\; \frac{m}{4}\,x_i\sum_{j}a_{ij} \;+\; \frac{m}{4}\sum_{j}a_{ji}\,x_j
+> ```
 >
 > These are 400 coupled ODEs (one per cell). Each cell can sit near
 > empty or near full, so the board has many equilibria and listing them
@@ -586,7 +639,7 @@ The seven boards appear in [section 1.2](#s1-2).
 
 #### Results
 
-<img src="REPORT_files/figure-gfm/d2-folds-1.png" alt="Hares on the settled board against rain for the seven boards" width="49%" /><img src="REPORT_files/figure-gfm/d2-folds-2.png" alt="Hares on the settled board against rain for the seven boards" width="49%" />
+<img src="REPORT_files/figure-gfm/d2-folds-1.png" alt="Hares on the settled board against rain for the seven boards" width="49%"/><img src="REPORT_files/figure-gfm/d2-folds-2.png" alt="Hares on the settled board against rain for the seven boards" width="49%"/>
 
 Hares on the settled board as rain falls (wet on the left). Filled
 markers: folds; dotted lines: the drop at each fold. Hollow markers: the
@@ -623,7 +676,7 @@ that stop recovering. On the Real board the south and the edges go first
 and the grassy north holds out to 0.718. On the $10\times 10$ boards the
 poor quadrants empty first.
 
-<img src="REPORT_files/figure-gfm/d3-staircase-1.png" alt="Board just above each fold on the Real and 10 by 10 random boards"  />
+<img src="REPORT_files/figure-gfm/d3-staircase-1.png" alt="Board just above each fold on the Real and 10 by 10 random boards"/>
 
 The staircase. Each map shows the settled board just above one fold; the
 purple outline marks where that fold’s collapse starts.
@@ -639,7 +692,7 @@ fold and shoots up at the fold itself. This is critical slowing down. On
 the $10\times 10$ boards it already spikes at rain 0.90, 0.2 of rain
 before the final collapse.
 
-<img src="REPORT_files/figure-gfm/d4-recovery-1.png" alt="Recovery time against rain for seven boards"  />
+<img src="REPORT_files/figure-gfm/d4-recovery-1.png" alt="Recovery time against rain for seven boards"/>
 
 Recovery time along each board’s settled branch. Each spike is a fold.
 
@@ -656,7 +709,7 @@ the board and act like one population (0.743 at $m = 400$). The default
 $m = 10$ sits near the worst point (0.771): hares hop enough to leak
 into poor cells, but not enough to pool.
 
-<img src="REPORT_files/figure-gfm/d5-hop-1.png" alt="Fold rain against hop rate on the Shuffled board"  />
+<img src="REPORT_files/figure-gfm/d5-hop-1.png" alt="Fold rain against hop rate on the Shuffled board"/>
 
 Shuffled board: final fold (solid) and first fold (dashed) against hop
 rate. Dotted lines: the no-hopping and fast-hopping limits.
@@ -715,7 +768,7 @@ The seven boards appear in [section 1.2](#s1-2).
 
 ### 3.3 Results
 
-<img src="REPORT_files/figure-gfm/e1-runs-1.png" alt="Hares against time for every run, four starts by seven boards, at rain 1.0"  />
+<img src="REPORT_files/figure-gfm/e1-runs-1.png" alt="Hares against time for every run, four starts by seven boards, at rain 1.0"/>
 
 *Rain 1.0, every run. Rows: the four starts; columns: the seven boards.
 Thin coloured lines: the 20 runs; black: their mean; dashed: the
@@ -732,7 +785,7 @@ $\pm 2$ SD of one run; grey line: year 20.
   160 runs fall below the band by years 40–50. In each, a poor quadrant
   has lost about a third or more of its hares.
 
-<img src="REPORT_files/figure-gfm/e1-starts-1.png" alt="Hares against time for four starts on seven boards at rain 1.0"  />
+<img src="REPORT_files/figure-gfm/e1-starts-1.png" alt="Hares against time for four starts on seven boards at rain 1.0"/>
 
 Rain 1.0. Solid: mean of 20 runs per start. Dashed: the deterministic
 path from the same start. Pink band: settled level $\pm 2$ SD of one
@@ -764,7 +817,7 @@ deterministic settled count.
 | $10\times 10$ random | 5 | 24 | 24 | 26 | 4–8 | 3155 | 3973 |
 | $10\times 10$ gradient | 7 | 18 | 33 | 16 | 3–10 | 3213 | 4036 |
 
-<img src="REPORT_files/figure-gfm/e1-drift-1.png" alt="Mean hares over 200 years at rain 1.0 and the poor quadrants of the 10 by 10 boards" width="49%" /><img src="REPORT_files/figure-gfm/e1-drift-2.png" alt="Mean hares over 200 years at rain 1.0 and the poor quadrants of the 10 by 10 boards" width="49%" />
+<img src="REPORT_files/figure-gfm/e1-drift-1.png" alt="Mean hares over 200 years at rain 1.0 and the poor quadrants of the 10 by 10 boards" width="49%"/><img src="REPORT_files/figure-gfm/e1-drift-2.png" alt="Mean hares over 200 years at rain 1.0 and the poor quadrants of the 10 by 10 boards" width="49%"/>
 
 A: mean hares per board. B: hares in the two poor quadrants of the
 $10\times 10$ boards at the start and the end.
@@ -782,7 +835,7 @@ $10\times 10$ boards at the start and the end.
   stochasticity slowly empties poor cells that the neighbours refill too
   rarely.
 
-<img src="REPORT_files/figure-gfm/e1-dry-1.png" alt="Hares against time for five starts on seven boards at rain 0.8"  />
+<img src="REPORT_files/figure-gfm/e1-dry-1.png" alt="Hares against time for five starts on seven boards at rain 0.8"/>
 
 Rain 0.8. Solid: mean of 20 runs, collapsed runs counted as 0. Dashed:
 deterministic path. Numbers: runs alive at year 50.
@@ -872,7 +925,7 @@ base; the gap between fold and $\rho_{50}$ is what stochasticity adds.
 
 ### 4.3 Results
 
-<img src="REPORT_files/figure-gfm/e2-tipping-1.png" alt="Tipping curves and rho50 per board" width="49%" /><img src="REPORT_files/figure-gfm/e2-tipping-2.png" alt="Tipping curves and rho50 per board" width="49%" />
+<img src="REPORT_files/figure-gfm/e2-tipping-1.png" alt="Tipping curves and rho50 per board" width="49%"/><img src="REPORT_files/figure-gfm/e2-tipping-2.png" alt="Tipping curves and rho50 per board" width="49%"/>
 
 A: share of runs collapsed by year 200 against rain, with logistic fits.
 B: $\rho_{50}(200)$ with 95% bootstrap intervals (narrower than the
@@ -897,7 +950,7 @@ the better half); section 2.2 gives the real folds.
 | $10\times 10$ random | 0.744 (0.741–0.748) | 0.765 (0.763–0.767) | 0.772 (0.771–0.774) | 0.776 (0.774–0.778) | 0.780 (0.779–0.781) | 0.714 | +0.062 |
 | $10\times 10$ gradient | 0.727 (0.726–0.738) | 0.752 (0.749–0.754) | 0.758 (0.755–0.759) | 0.761 (0.759–0.762) | 0.765 (0.764–0.766) | 0.702 | +0.059 |
 
-<img src="REPORT_files/figure-gfm/e2-fold-gap-1.png" alt="Deterministic fold against E2 rho50 per board"  />
+<img src="REPORT_files/figure-gfm/e2-fold-gap-1.png" alt="Deterministic fold against E2 rho50 per board"/>
 
 Filled: deterministic final fold. Hollow: $\rho_{50}$ at 200 years.
 Number: the gap, the part of tipping that comes from stochasticity.
@@ -909,7 +962,7 @@ Ticks: the first fold of the clumped boards.
   0.750–0.771; tipping 0.831–0.838) but keeps every fine board above
   every clumped one.
 
-<img src="REPORT_files/figure-gfm/e2-hares-vs-det-1.png" alt="Hares at year 200 against rain over the deterministic settled board"  />
+<img src="REPORT_files/figure-gfm/e2-hares-vs-det-1.png" alt="Hares at year 200 against rain over the deterministic settled board"/>
 
 One dot per run: hares at year 200 (grey crosses: no hare left). Black:
 the deterministic settled board, with its folds. Dashed:
@@ -922,7 +975,7 @@ $\rho_{50}(200)$.
   (poor parts empty, good parts full), as the deterministic staircase
   predicts.
 
-<img src="REPORT_files/figure-gfm/e2-mean-N-1.png" alt="Mean hares over time for every board at six rains"  />
+<img src="REPORT_files/figure-gfm/e2-mean-N-1.png" alt="Mean hares over time for every board at six rains"/>
 
 Mean hares over time (collapsed runs counted as 0) for every board at
 six rains.
@@ -931,7 +984,7 @@ six rains.
   years, while the clumped boards hold 700–1,700 hares for centuries.**
   Clumped boards hold fewer hares but keep them.
 
-<img src="REPORT_files/figure-gfm/e2-story-1.png" alt="Hares over time at six rains per board, each panel titled by what happens"  />
+<img src="REPORT_files/figure-gfm/e2-story-1.png" alt="Hares over time at six rains per board, each panel titled by what happens"/>
 
 Every run (thin) and the mean (black, collapsed runs = 0) at six rains
 per board: 0.10, 0.025 and 0.005 below its $\rho_{50}(200)$, 0.005 and
@@ -942,7 +995,7 @@ are runs dead by the last year shown. Dotted: year 200.
   share of their hares and keep them spread out; clumped boards lose the
   poor half and hold on in refuges.
 
-<img src="REPORT_files/figure-gfm/e2-pullback-1.png" alt="Hares in poor cells against hares in good cells over 200 years"  />
+<img src="REPORT_files/figure-gfm/e2-pullback-1.png" alt="Hares in poor cells against hares in good cells over 200 years"/>
 
 Pullback: hares in the 200 poorest cells against hares in the 200 best,
 year 0 to 200. Blue: 20 runs at the wet edge $\rho_w(200)$, where 10% of
@@ -965,7 +1018,7 @@ year by year.
 - **Wet and dry edges trace the same path** and differ only in how far
   along it the runs get by year 200.
 
-<img src="REPORT_files/figure-gfm/e2-refuges-1.png" alt="Refuge maps"  />
+<img src="REPORT_files/figure-gfm/e2-refuges-1.png" alt="Refuge maps"/>
 
 Share of years 180–200 each cell held hares, averaged over surviving
 runs just above $\rho_{50}$. Top: grass.
@@ -976,7 +1029,7 @@ runs just above $\rho_{50}$. Top: grass.
 - **On the** $10\times 10$ boards the good quadrants are the refuges; on
   fine boards survivors spread evenly.
 
-<img src="REPORT_files/figure-gfm/e2-survival-1.png" alt="Survival curves"  />
+<img src="REPORT_files/figure-gfm/e2-survival-1.png" alt="Survival curves"/>
 
 Share of runs alive against year, one curve per rain within 0.1 of
 $\rho_{50}$. Orange: drier than $\rho_{50}$; blue: wetter.
@@ -991,13 +1044,13 @@ $\rho_{50}$. Orange: drier than $\rho_{50}$; blue: wetter.
 
 #### Time window vs $\rho_{50}$ vs switch width vs $K$
 
-<img src="REPORT_files/figure-gfm/e2-long-1.png" alt="Tipping curves up to 2,000 years on Real and Shuffled" width="49%" /><img src="REPORT_files/figure-gfm/e2-long-2.png" alt="Tipping curves up to 2,000 years on Real and Shuffled" width="49%" />
+<img src="REPORT_files/figure-gfm/e2-long-1.png" alt="Tipping curves up to 2,000 years on Real and Shuffled" width="49%"/><img src="REPORT_files/figure-gfm/e2-long-2.png" alt="Tipping curves up to 2,000 years on Real and Shuffled" width="49%"/>
 
 New runs of 2,000 years on Real and Shuffled.
 
-<img src="REPORT_files/figure-gfm/e2-theory-curves-1.png" alt="Exact one-cell tipping curves for windows of 10 to 10^8 years"  />
+<img src="REPORT_files/figure-gfm/e2-theory-curves-1.png" alt="Exact one-cell tipping curves for windows of 10 to 10^8 years"/>
 
-<img src="REPORT_files/figure-gfm/e2-theory-switch-1.png" alt="Exact one-cell tipping curves for windows of 10 to 10^8 years" width="49%" /><img src="REPORT_files/figure-gfm/e2-theory-switch-2.png" alt="Exact one-cell tipping curves for windows of 10 to 10^8 years" width="49%" />
+<img src="REPORT_files/figure-gfm/e2-theory-switch-1.png" alt="Exact one-cell tipping curves for windows of 10 to 10^8 years" width="49%"/><img src="REPORT_files/figure-gfm/e2-theory-switch-2.png" alt="Exact one-cell tipping curves for windows of 10 to 10^8 years" width="49%"/>
 
 One sealed cell, solved exactly: the chance of being empty after windows
 of 10 to $10^8$ years, for cells of about 14, 28, 71 and 142 hares.
@@ -1121,7 +1174,7 @@ rain along the same ramp, and read the rain when $N$ first drops below
 10% of its start. This shows lag alone. Example (Shuffled, fold 0.771):
 0.754 on the 4,050-year ramp, 0.608 on the 50-year ramp.
 
-<img src="REPORT_files/figure-gfm/e3-collapse-1.png" alt="Collapse rain against ramp length for seven boards"  />
+<img src="REPORT_files/figure-gfm/e3-collapse-1.png" alt="Collapse rain against ramp length for seven boards"/>
 
 Dots: single runs; coloured line: their mean. Dashed black: the
 deterministic board on the same ramp. Dotted black: the deterministic
@@ -1172,7 +1225,7 @@ fold. Dash-dot: E2’s $\rho_{50}(200)$.
   it dies about 0.1 of rain below the 10% point (8–10 years later); on
   the slowest ramp the difference is under 0.01.
 
-<img src="REPORT_files/figure-gfm/e3-threshold-1.png" alt="Collapse rain by the 10% rule and by the last hare" width="49%" /><img src="REPORT_files/figure-gfm/e3-threshold-2.png" alt="Collapse rain by the 10% rule and by the last hare" width="49%" />
+<img src="REPORT_files/figure-gfm/e3-threshold-1.png" alt="Collapse rain by the 10% rule and by the last hare" width="49%"/><img src="REPORT_files/figure-gfm/e3-threshold-2.png" alt="Collapse rain by the 10% rule and by the last hare" width="49%"/>
 
 The same 700 runs measured two ways. A: the rain when fewer than 10% of
 the starting hares remain. B: the rain when the last hare dies. Arrows:
@@ -1186,7 +1239,7 @@ E2’s $\rho_{50}(200)$.
 - **The board ranking and the rise with ramp length hold under both
   rules,** so the 10% rule changes the numbers, not the conclusions.
 
-<img src="REPORT_files/figure-gfm/e3-N-vs-rain-1.png" alt="Hares against the current rain for five ramp speeds"  />
+<img src="REPORT_files/figure-gfm/e3-N-vs-rain-1.png" alt="Hares against the current rain for five ramp speeds"/>
 
 Mean hares against the current rain for each speed (light: fast, dark:
 slow). Black: the deterministic settled board. Grey dots: E2’s mean
@@ -1198,7 +1251,7 @@ hares at fixed rain.
 - **The clumped boards fall in steps on slow ramps,** poor parts first,
   as the deterministic staircase predicts.
 
-<img src="REPORT_files/figure-gfm/e3-empty-first-1.png" alt="Rain at which each cell is empty in most runs, for the fastest and slowest ramps"  />
+<img src="REPORT_files/figure-gfm/e3-empty-first-1.png" alt="Rain at which each cell is empty in most runs, for the fastest and slowest ramps"/>
 
 Rain at which each cell is empty in more than half the runs (from boards
 saved every 0.005 of rain). Brown: empties early; blue: holds out.
@@ -1268,12 +1321,12 @@ total.
 
 ### 6.3 Results
 
-<img src="REPORT_files/figure-gfm/e4-sites-1.png" alt="Release sites on the Real board"  />
+<img src="REPORT_files/figure-gfm/e4-sites-1.png" alt="Release sites on the Real board"/>
 
 Where the colonies go. A: the best $k\times k$ square for each size, all
 in the grassy north. B: the three designs of 224 hares.
 
-<img src="REPORT_files/figure-gfm/e4-size-1.png" alt="Share of runs alive at year 50 against colony size, four rains"  />
+<img src="REPORT_files/figure-gfm/e4-size-1.png" alt="Share of runs alive at year 50 against colony size, four rains"/>
 
 Share of runs alive at year 50 against colony size.
 
@@ -1293,7 +1346,7 @@ Share of runs alive at year 50 against colony size.
   survives 200 years in every E2 run, yet a colony needs 224 hares
   packed into 16 cells to come back.
 
-<img src="REPORT_files/figure-gfm/e4-designs-1.png" alt="Success of three designs of 224 hares at four rains"  />
+<img src="REPORT_files/figure-gfm/e4-designs-1.png" alt="Success of three designs of 224 hares at four rains"/>
 
 224 hares as one $4\times 4$ colony, four $2\times 2$ colonies or
 sixteen single cells.
@@ -1313,7 +1366,7 @@ sixteen single cells.
   the best grass (mean $q$ 0.880, against 0.833 for the $4\times 4$
   colony) and still do worst.
 
-<img src="REPORT_files/figure-gfm/e4-growth-1.png" alt="Hares after release for several colony sizes" width="49%" /><img src="REPORT_files/figure-gfm/e4-growth-2.png" alt="Hares after release for several colony sizes" width="49%" />
+<img src="REPORT_files/figure-gfm/e4-growth-1.png" alt="Hares after release for several colony sizes" width="49%"/><img src="REPORT_files/figure-gfm/e4-growth-2.png" alt="Hares after release for several colony sizes" width="49%"/>
 
 Mean hares of the surviving runs after release.
 
