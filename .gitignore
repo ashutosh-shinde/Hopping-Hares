@@ -2,6 +2,10 @@
 .Rhistory
 .RData
 .Ruserdata
-try
+try/
 .html
 .Ds_Store
+src/*.o
+src/*.so
+src/*.dll
+results_quick/
